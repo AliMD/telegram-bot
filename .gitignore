@@ -37,7 +37,8 @@ tmp
 coverage
 
 # API keys and secrets
-.env
+.env.*
+.bot.*
 
 # Dependency directory
 node_modules

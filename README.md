@@ -1,1 +1,1 @@
-# A Telegram BOT for `Nekoudasht Ghadir Community`
+# A Telegram BOT for `Ghadir Nekoudasht Community`

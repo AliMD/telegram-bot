@@ -54,5 +54,5 @@ Thumbs.db
 # Ignore built ts files
 /dist
 
-# db file
-/data
+# files
+/file

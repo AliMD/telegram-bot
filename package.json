@@ -12,7 +12,7 @@
     "serve": "node dist/index.js",
     "build": "yarn build-ts && yarn lint",
     "build-ts": "rm -rf dist && tsc",
-    "lint": "tslint -c tslint.json -p tsconfig.json --fix",
+    "lint": "eslint src/**/*.ts --fix",
     "watch-node": "nodemon --watch dist dist/index.js",
     "watch-node-debug": "nodemon --watch dist --inspect dist/index.js",
     "watch-ts": "rm -rf dist && tsc -w"

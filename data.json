@@ -1,0 +1,24 @@
+{
+  "command": {
+    "start": {
+      "messageList": [
+        {
+          "type": "text",
+          "value": "تشکر از توجه شما"
+        },
+        {
+          "type": "imageId",
+          "value": "./file/image.jpg"
+        },
+        {
+          "type": "videoMessageId",
+          "value": "./file/video-message-1.mp4"
+        },
+        {
+          "type": "voiceId",
+          "value": "./file/voice.ogg"
+        }
+      ]
+    }
+  }
+}

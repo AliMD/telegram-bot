@@ -49,7 +49,7 @@ export const sendMessage = async (
         );
         await delay();
         await botContext.telegram.sendVoice(botContext.chat.id, {
-          source: message.value,
+          source: fs.createReadStream(message.value),
         });
         break;
 

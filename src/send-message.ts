@@ -24,42 +24,42 @@ export const sendMessage = async (
   botContext: Context,
 ): Promise<boolean> => {
   log('sendMessage');
-
   if (!(Array.isArray(messageList) && messageList.length > 0)) {
     return false;
   }
 
+  const bot = botContext.telegram;
+
   for (const message of messageList) {
     switch (message.type) {
       case 'videoMessageId':
-        await botContext.telegram.sendChatAction(
+        await bot.sendChatAction(
           botContext.chat.id,
           'upload_video_note',
         );
-        await delay();
-        await botContext.telegram.sendVideoNote(botContext.chat.id, {
+        await bot.sendVideoNote(botContext.chat.id, {
           source: fs.createReadStream(message.value),
         });
         break;
 
       case 'voiceId':
-        await botContext.telegram.sendChatAction(
+        await bot.sendChatAction(
           botContext.chat.id,
           'upload_audio',
         );
         await delay();
-        await botContext.telegram.sendVoice(botContext.chat.id, {
+        await bot.sendVoice(botContext.chat.id, {
           source: fs.createReadStream(message.value),
         });
         break;
 
       case 'imageId':
-        await botContext.telegram.sendChatAction(
+        await bot.sendChatAction(
           botContext.chat.id,
           'upload_photo',
         );
         await delay();
-        await botContext.telegram.sendPhoto(botContext.chat.id, {
+        await bot.sendPhoto(botContext.chat.id, {
           source: message.value,
         });
         break;
@@ -73,6 +73,7 @@ export const sendMessage = async (
         );
         break;
     }
+    await delay();
   }
 
   return true;

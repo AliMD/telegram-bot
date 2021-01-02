@@ -1,0 +1,6 @@
+{
+  userid: {
+    accept: true,
+    doneList: ['yy/mm/dd', 'yy/mm/dd'],
+  }
+}

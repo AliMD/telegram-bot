@@ -1,28 +1,29 @@
 {
   "compilerOptions": {
+    "target": "ES2019",
     "module": "commonjs",
+    "moduleResolution": "node",
+    "lib": ["es2019"],
     "declaration": true,
-    "removeComments": true,
-    "emitDecoratorMetadata": true,
+    "sourceMap": true,
+    "strict": true,
+    "removeComments": false,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
     "experimentalDecorators": true,
-    "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "noImplicitAny": false,
-    "moduleResolution": "Node",
-    "target": "ESNext",
-    "sourceMap": true,
-    "outDir": "./dist",
-    "baseUrl": ".",
+    "skipLibCheck": true,
+    "importHelpers": true,
     "incremental": true,
-    "paths": {
-      "*": [
-        "node_modules/*",
-        "src/types/*"
-      ]
-    }
+    "tsBuildInfoFile": ".tsbuildinfo",
+    "outDir": "dist"
   },
   "include": [
-    "src/**/*"
-  ]
+    "src/**/*.ts"
+  ],
+  "exclude": []
 }

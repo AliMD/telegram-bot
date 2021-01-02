@@ -4,19 +4,24 @@
       "messageList": [
         {
           "type": "text",
-          "value": "تشکر از توجه شما"
+          "text": "تشکر از توجه شما",
+          "delay": 1000
         },
         {
-          "type": "imageId",
-          "value": "./file/image.jpg"
+          "type": "image",
+          "fileId": 123,
+          "caption": "asdasd",
+          "delay": 1000
         },
         {
-          "type": "videoMessageId",
-          "value": "./file/video-message-1.mp4"
+          "type": "videoMessage",
+          "fileId": 123,
+          "delay": 1000
         },
         {
-          "type": "voiceId",
-          "value": "./file/voice.ogg"
+          "type": "voice",
+          "fileId": 123,
+          "delay": 1000
         }
       ]
     }

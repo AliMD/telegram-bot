@@ -1,6 +1,7 @@
 import './common/config';
-import './send-message';
-import './menu-markup';
 import { bot } from './telegram-bot';
+import './send-message';
+// import './menu-markup';
+// import './bot';
 
 bot.launch();

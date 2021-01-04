@@ -1,11 +1,15 @@
 import { debug } from 'debug';
 const log = debug('app/menu-markup');
 
+import { config } from './common/config';
 import { bot } from './telegram-bot';
 import { Context } from 'telegraf';
-import { getDocument } from './database';
-
-import type { User } from 'telegraf/typings/telegram-types';
+import {
+  updateBotData,
+  getTodayStatistics,
+  changeUserAcceptState,
+} from './update-bot-data';
+import { sendMessage } from './send-message';
 
 // bot.command('menu', ({ reply }) =>
 //   reply(
@@ -20,8 +24,10 @@ bot.hears('ماموریت امروز', async (ctx: Context) => {
   if (ctx.chat == null) {
     return;
   }
-  await ctx.telegram.sendChatAction(ctx.chat.id, 'typing');
-  ctx.reply('انجام یک ذکر صلوات');
+
+  log('%s pressed `Today Permission` button', ctx.chat.username);
+
+  await sendMessage(config.todayPermission.messageList, ctx);
 });
 
 bot.hears('انجام شد', async (ctx: Context) => {
@@ -29,9 +35,58 @@ bot.hears('انجام شد', async (ctx: Context) => {
     return;
   }
 
+  log('%s pressed `Done` button', ctx.chat.username);
+
+  await sendMessage(config.done.messageList, ctx);
   await updateBotData(ctx.message?.from);
-  await ctx.telegram.sendChatAction(ctx.chat.id, 'typing');
-  ctx.reply('تشکر از مشارکت شما.');
+});
+
+bot.hears('آمار', async (ctx: Context) => {
+  if (ctx.chat == null || ctx.message?.from == null) {
+    return;
+  }
+
+  log('%s pressed `Statistics` button', ctx.chat.username);
+
+  const todayStatistics = await getTodayStatistics();
+
+  log('todayStatistics: %o', todayStatistics);
+
+  await sendMessage(
+    [
+      {
+        ...config.todayStatistics.messageList[0],
+        text: (config.todayStatistics.messageList[0].text as string).replace(
+          '%s%',
+          String(todayStatistics.userListCount),
+        ),
+      },
+      {
+        ...config.todayStatistics.messageList[1],
+        text: (config.todayStatistics.messageList[1].text as string).replace(
+          '%s%',
+          String(todayStatistics.totalDoneCount),
+        ),
+      },
+    ],
+    ctx,
+  );
+});
+
+bot.hears('انصراف', async (ctx: Context) => {
+  if (ctx.chat == null || ctx.message?.from == null) {
+    return;
+  }
+
+  log('%s pressed `Cancel` button', ctx.chat.username);
+
+  await sendMessage(config.cancel.messageList, ctx);
+  await ctx.reply('صفحه کلید حذف شد', {
+    reply_markup: {
+      remove_keyboard: true,
+    },
+  });
+  await changeUserAcceptState(ctx.message?.from);
 });
 
 bot.command('removeKeyboard', ({ reply }) =>
@@ -41,51 +96,3 @@ bot.command('removeKeyboard', ({ reply }) =>
     },
   }),
 );
-
-const updateBotData = async (userInfo: User) => {
-  log('updateDoneList');
-  const doneListDocument = getDocument('done-list');
-  const userListDocument = getDocument('user-list');
-
-  const userId = String(userInfo.id);
-  const userInDB = await userListDocument.find((doc) => {
-    return doc._id === userId;
-  });
-
-  const date = new Date();
-  // eslint-disable-next-line prettier/prettier
-  const doneStandardDate = `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}`;
-
-  if (
-    userInDB != null &&
-    'doneList' in userInDB &&
-    (userInDB['doneList'] as string[]).indexOf(doneStandardDate) === -1
-  ) {
-    (userInDB['doneList'] as string[]).push(doneStandardDate);
-    userInDB._modified = Date.now();
-    await userListDocument.set(userId, userInDB);
-  }
-
-  // FIXME: What do we in multiple sync requests? 👇
-
-  const doneList = await doneListDocument._storage;
-  if (Object.keys(doneList).length === 0) {
-    await doneListDocument.set(doneStandardDate, {
-      _id: doneStandardDate,
-      _created: Date.now(),
-      _modified: Date.now(),
-      totalCount: 1,
-    });
-    return;
-  }
-
-  const todayDoneRecord = await doneListDocument.find((doc) => {
-    return doc._id === doneStandardDate;
-  });
-
-  if (todayDoneRecord != null) {
-    todayDoneRecord._modified = Date.now();
-    todayDoneRecord.totalCount = (todayDoneRecord.totalCount as number) + 1;
-    await doneListDocument.set(doneStandardDate, todayDoneRecord);
-  }
-};

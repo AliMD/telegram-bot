@@ -5,4 +5,4 @@ const log = debug('app/telegram-bot');
 
 log('Initialing bot ...');
 export const bot = new Telegraf(config.botToken);
-log(`${config.botName} is running...`);
+log(`${config.botName ?? 'The bot'} is running...`);

@@ -22,21 +22,40 @@
       {
         "type": "voice",
         "fileId": "AwACAgQAAxkBAAIBjl_ySNuCHVCW_r_TV8dTtEDa5jS7AAKOCQACB7qZU3JqqOfpmR6OHgQ",
-        "caption": "صدایی برای فاطمیه"
+        "caption": "صدایی برای فاطمیه",
+        "delay": 2000
       }
     ]
+  },
+
+  "showKeyboard": {
+    "text": "از منوی زیر انتخاب کنید 👇👇"
   },
 
   "todayPermission": {
     "messageList": [
       {
         "type": "text",
-        "text": "کار اول"
+        "text": "کار اول",
+        "delay": 2000
       },
       {
         "type": "text",
-        "text": "کار دوم",
+        "text": "کار دوم"
+      }
+    ]
+  },
+
+  "todayStatistics": {
+    "messageList": [
+      {
+        "type": "text",
+        "text": "کل افراد شرکت کننده: %s%",
         "delay": 2000
+      },
+      {
+        "type": "text",
+        "text": "تعداد افرادی که ماموریت امروز را انجام دادند: %s%"
       }
     ]
   },
@@ -54,7 +73,8 @@
     "messageList": [
       {
         "type": "text",
-        "text": "خدانگهدار!!!"
+        "text": "خدانگهدار!!!",
+        "delay": 2000
       }
     ]
   }

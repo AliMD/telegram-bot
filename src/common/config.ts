@@ -6,7 +6,7 @@ debug.enable(process.env.DEBUG || 'app/*');
 // const log = debug('app/config');
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-export const config = require('../../config.json');
+export const config = require('../../bot-config.json');
 
 // const loadDotEnv = (path: string): boolean => {
 //   if (!fs.existsSync(path)) {

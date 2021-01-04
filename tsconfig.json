@@ -1,10 +1,10 @@
 {
   "compilerOptions": {
     "strict": true,
-    "outDir": ".",
+    "outDir": "./dist",
     "lib": ["es2020"],
     "target": "es2020",
-    "module": "es2020",
+    "module": "CommonJS",
     "declaration": true,
     "skipLibCheck": true,
     "importHelpers": true,

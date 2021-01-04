@@ -1,80 +1,129 @@
-import { bot } from './telegram-bot';
-import { Context } from 'telegraf';
-import { delay } from './common/delay';
-import fs from 'fs';
 import { debug } from 'debug';
 const log = debug('app/send-message');
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-export const data = require('../data.json');
+import './menu-markup';
+import { bot } from './telegram-bot';
+import { Context, Markup } from 'telegraf';
+import { delay } from './common/delay';
+import { getDocument } from './database';
+import { config } from './common/config';
 
-type MessageType = 'text' | 'voiceId' | 'imageId' | 'videoMessageId';
+import type { User } from 'telegraf/typings/telegram-types';
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+// export const data = require('../data.json');
 
 interface Message {
-  type: MessageType;
-  value: string;
+  type: 'text' | 'voice' | 'image' | 'videoMessage';
+  text?: string;
+  fileId?: string;
+  delay?: number;
+  caption?: string;
 }
 
 bot.start(async (ctx: Context) => {
-  await sendMessage(data.command.start.messageList, ctx);
+  if (ctx.message?.from != null) {
+    log('User info: %o', ctx.message.from);
+    await updateUserList(ctx.message.from);
+  }
+  await sendMessage(config.start.messageList, ctx);
 });
 
-export const sendMessage = async (
+const sendMessage = async (
   messageList: Array<Message>,
   botContext: Context,
-): Promise<boolean> => {
+): Promise<void> => {
   log('sendMessage');
-  if (!(Array.isArray(messageList) && messageList.length > 0)) {
-    return false;
+
+  botContext.reply(
+    'سلام',
+    Markup.keyboard([
+      [
+        Markup.button('ماموریت امروز'),
+        Markup.button('انجام شد'),
+        Markup.button('انصراف'),
+      ],
+    ])
+      .resize()
+      .oneTime()
+      .extra(),
+  );
+
+  if (
+    !(
+      Array.isArray(messageList) &&
+      messageList.length > 0 &&
+      botContext.chat != null
+    )
+  ) {
+    return;
   }
 
-  const bot = botContext.telegram;
-
+  const telegram = bot.telegram;
   for (const message of messageList) {
     switch (message.type) {
-      case 'videoMessageId':
-        await bot.sendChatAction(
-          botContext.chat.id,
-          'upload_video_note',
-        );
-        await bot.sendVideoNote(botContext.chat.id, {
-          source: fs.createReadStream(message.value),
+      case 'videoMessage':
+        if (message.fileId == null) break;
+        await telegram.sendChatAction(botContext.chat.id, 'upload_video_note');
+        await telegram.sendVideoNote(botContext.chat.id, message.fileId);
+        break;
+
+      case 'voice':
+        if (message.fileId == null) break;
+        await telegram.sendChatAction(botContext.chat.id, 'upload_audio');
+        await telegram.sendVoice(botContext.chat.id, message.fileId, {
+          caption: message.caption ?? '',
         });
         break;
 
-      case 'voiceId':
-        await bot.sendChatAction(
-          botContext.chat.id,
-          'upload_audio',
-        );
-        await delay();
-        await bot.sendVoice(botContext.chat.id, {
-          source: fs.createReadStream(message.value),
-        });
-        break;
-
-      case 'imageId':
-        await bot.sendChatAction(
-          botContext.chat.id,
-          'upload_photo',
-        );
-        await delay();
-        await bot.sendPhoto(botContext.chat.id, {
-          source: message.value,
+      case 'image':
+        if (message.fileId == null) break;
+        await telegram.sendChatAction(botContext.chat.id, 'upload_photo');
+        await telegram.sendPhoto(botContext.chat.id, message.fileId, {
+          caption: message.caption ?? '',
         });
         break;
 
       default:
+        if (message.text == null) break;
         await botContext.telegram.sendChatAction(botContext.chat.id, 'typing');
-        await delay();
-        await botContext.telegram.sendMessage(
-          botContext.chat.id,
-          message.value,
-        );
+        await botContext.telegram.sendMessage(botContext.chat.id, message.text);
         break;
     }
-    await delay();
+
+    await delay(Number(message.delay ?? 0));
+  }
+};
+
+const updateUserList = async (user: User): Promise<void> => {
+  log('updateUserList');
+
+  const userId = String(user.id);
+  const userListDocument = getDocument('user-list');
+
+  const userInDB = await userListDocument.find((doc) => {
+    return doc._id === userId;
+  });
+
+  if (userInDB !== null) {
+    return;
   }
 
-  return true;
+  const { first_name, last_name, username, language_code, is_bot } = user;
+  await userListDocument.set(
+    userId,
+    {
+      _id: userId,
+      _created: Date.now(),
+      _modified: Date.now(),
+      accept: false,
+      doneList: [],
+      first_name,
+      last_name,
+      username,
+      language_code,
+      is_bot,
+    },
+    true,
+  );
 };

@@ -1,0 +1,61 @@
+{
+  "botToken": "1462246234:AAEnUoTH6AZujd4odY95jvHT9hOcRom9P9c",
+
+  "start": {
+    "messageList": [
+      {
+        "type": "text",
+        "text": "تشکر از توجه شما",
+        "delay": 2000
+      },
+      {
+        "type": "image",
+        "fileId": "AgACAgQAAxkBAAIBg1_yRyMWwMINBA8niicT8C35Fsg8AAKRsjEbB7qZU1pQcIKmdwybD6OAJ10AAwEAAwIAA20AA2vBAwABHgQ",
+        "caption": "تصویری برای فاطمیه",
+        "delay": 3000
+      },
+      {
+        "type": "videoMessage",
+        "fileId": "DQACAgQAAxkBAAIBiF_yR_YxqSpwuhFeywXu8HzcN5t-AAI9CAACVHtIUxMS9fJW9gfjHgQ",
+        "delay": 4000
+      },
+      {
+        "type": "voice",
+        "fileId": "AwACAgQAAxkBAAIBjl_ySNuCHVCW_r_TV8dTtEDa5jS7AAKOCQACB7qZU3JqqOfpmR6OHgQ",
+        "caption": "صدایی برای فاطمیه"
+      }
+    ]
+  },
+
+  "todayPermission": {
+    "messageList": [
+      {
+        "type": "text",
+        "text": "کار اول"
+      },
+      {
+        "type": "text",
+        "text": "کار دوم",
+        "delay": 2000
+      }
+    ]
+  },
+
+  "done": {
+    "messageList": [
+      {
+        "type": "text",
+        "text": "آفرین!!"
+      }
+    ]
+  },
+
+  "cancel": {
+    "messageList": [
+      {
+        "type": "text",
+        "text": "خدانگهدار!!!"
+      }
+    ]
+  }
+}

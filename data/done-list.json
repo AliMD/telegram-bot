@@ -1,9 +1,15 @@
 {
-  "2021/1/4": {
-    "_id": "2021/1/4",
-    "_created": 1609706913488,
-    "_modified": 1609706913488,
-    "totalCount": 1
+  "totalCount": {
+    "_id": "totalCount",
+    "_created": 1609791971190,
+    "_modified": 1609791971190,
+    "value": 1
   },
-  "_latest": "2021/1/4"
+  "_latest": "2021/1/5",
+  "2021/1/5": {
+    "_id": "2021/1/5",
+    "_created": 1609791971190,
+    "_modified": 190,
+    "doneCount": 1
+  }
 }

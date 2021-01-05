@@ -5,31 +5,37 @@
     "messageList": [
       {
         "type": "text",
-        "text": "تشکر از توجه شما",
-        "delay": 2000
-      },
-      {
-        "type": "image",
-        "fileId": "AgACAgQAAxkBAAIBg1_yRyMWwMINBA8niicT8C35Fsg8AAKRsjEbB7qZU1pQcIKmdwybD6OAJ10AAwEAAwIAA20AA2vBAwABHgQ",
-        "caption": "تصویری برای فاطمیه",
-        "delay": 3000
+        "text": "%s%\n\n عزیز\n\n  ممنون از این که با ما همراه شدی 🙌\n\n 👈 برای اینکه با طرز کار ربات اشنا بشی لطفا این ویدیو مسیج یک دقیقه ای رو ببین\n\n 👇👇",
+        "delay": 5000
       },
       {
         "type": "videoMessage",
-        "fileId": "DQACAgQAAxkBAAIBiF_yR_YxqSpwuhFeywXu8HzcN5t-AAI9CAACVHtIUxMS9fJW9gfjHgQ",
-        "delay": 4000
+        "fileId": "DQACAgIAAxkBAAM9X_TCq63EzpXQbnbcSM5ViJeVlG8AAnwJAAJLa6hLTeFhgy6MjfgeBA",
+        "delay": 20000
       },
       {
-        "type": "voice",
-        "fileId": "AwACAgQAAxkBAAIBjl_ySNuCHVCW_r_TV8dTtEDa5jS7AAKOCQACB7qZU3JqqOfpmR6OHgQ",
-        "caption": "صدایی برای فاطمیه",
+        "type": "text",
+        "text": "بعد از دیدن ویدیو در صورتی که دوست داری قدم اولو ببینی لطفا روی ماموریت اول کلیک کن",
         "delay": 2000
       }
     ]
   },
 
   "showKeyboard": {
-    "text": "از منوی زیر انتخاب کنید 👇👇"
+    "text": "بیا زود تر شروع کنیم ❤️"
+  },
+
+  "firstPermission": {
+    "messageList": [
+      {
+        "type": "image",
+        "fileId": "AgACAgQAAxkBAAN2X_TL7rTF3mYq8WCbGbaE0B0u8qQAAha2MRtMAAGpU5H77xi2wR-Izi-9Kl0AAwEAAwIAA3gAA_GdAAIeBA",
+        "fileId2": "AgACAgQAAxkBAAN2X_TL7rTF3mYq8WCbGbaE0B0u8qQAAha2MRtMAAGpU5H77xi2wR-Izi-9Kl0AAwEAAwIAA3kAA_KdAAIeBA",
+        "fileId3": "AgACAgQAAxkBAAN2X_TL7rTF3mYq8WCbGbaE0B0u8qQAAha2MRtMAAGpU5H77xi2wR-Izi-9Kl0AAwEAAwIAA20AA_CdAAIeBA",
+        "caption": "دغدغه فاطمیه داری ؟ \n\n تعویض عکس پروفایل میتونه یه شروع عالی باشه 💪👌 \n\n برای اینکه کارت راحت باشه نمونه پروفایل های پیشنهادیمون رو هم برات تو پیام های بعدی میفرستیم اگه دوست داشتی از اینا انتخاب کن😉 \n\n اگه این کارو انجام دادی لطفا به من بگو که منم کلیییی انرژی بگیرم❤️❤️❤️",
+        "delay": 2000
+      }
+    ]
   },
 
   "todayPermission": {
@@ -64,7 +70,8 @@
     "messageList": [
       {
         "type": "text",
-        "text": "آفرین!!"
+        "text": "دمت گرم امروز تو این کار همراه ما بودی \n تو امروز %s% امین نفر بودی این کار رو انجام دادی",
+        "delay": 2000
       }
     ]
   },

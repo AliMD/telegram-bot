@@ -13,7 +13,18 @@ bot.start(async (ctx: Context) => {
     log('User info: %o', ctx.message.from);
     await updateUserList(ctx.message.from);
   }
-  await sendMessage(config.start.messageList, ctx);
+
+  const messageList = [...config.start.messageList];
+  messageList[0] = {
+    ...messageList[0],
+    text: (messageList[0].text as string).replace(
+      '%s%',
+      `${ctx.message?.from?.first_name ?? 'کاربر'} ${
+        ctx.message?.from?.last_name ?? 'محترم'
+      }`,
+    ),
+  };
+  await sendMessage(messageList, ctx);
 
   await ctx.reply(
     config.showKeyboard.text,
@@ -22,7 +33,7 @@ bot.start(async (ctx: Context) => {
         Markup.button('انصراف'),
         Markup.button('آمار'),
         Markup.button('انجام شد'),
-        Markup.button('ماموریت امروز'),
+        Markup.button('ماموریت اول'),
       ],
     ])
       .resize()

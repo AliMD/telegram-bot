@@ -35,10 +35,10 @@ export const getTodayStatistics = async (): Promise<{
   };
 };
 
-export const updateUserList = async (user: User): Promise<void> => {
+export const updateUserList = async (userInfo: User): Promise<void> => {
   log('updateUserList');
 
-  const userId = String(user.id);
+  const userId = String(userInfo.id);
   const userListDocument = getDocument('user-list');
 
   const userInDB = await userListDocument.find((doc) => {
@@ -49,12 +49,13 @@ export const updateUserList = async (user: User): Promise<void> => {
     return;
   }
 
-  const { first_name, last_name, username, language_code, is_bot } = user;
+  const nowUnixTime = Date.now();
+  const { first_name, last_name, username, language_code, is_bot } = userInfo;
   await userListDocument.set(userId, {
     _id: userId,
-    _created: Date.now(),
-    _modified: Date.now(),
-    accept: true, // I assumed on start the user wants to stay with us!!
+    _created: nowUnixTime,
+    _modified: nowUnixTime,
+    accept: false,
     doneList: [],
     first_name,
     last_name,
@@ -64,10 +65,39 @@ export const updateUserList = async (user: User): Promise<void> => {
   });
 };
 
-export const updateBotData = async (userInfo: User) => {
+export const userHasBeenDoneFirstMission = async (
+  userInfo: User,
+): Promise<boolean> => {
+  log('userHasBeenDoneFirstMission');
+
+  const userId = String(userInfo.id);
+  const userListDocument = getDocument('user-list');
+
+  const userInDB = await userListDocument.find((doc) => {
+    return doc._id === userId;
+  });
+
+  if (userInDB == null || !userInDB.accept) {
+    return false;
+  }
+
+  return true;
+};
+
+export const updateBotData = async (
+  userInfo: User,
+): Promise<{
+  totalDoneCount: number;
+  userListCount: number;
+} | null> => {
   log('updateDoneList');
+
+  let totalDoneCount = 0;
+  let userListCount = 0;
   const doneListDocument = getDocument('done-list');
   const userListDocument = getDocument('user-list');
+
+  userListCount = Object.keys(await userListDocument._storage).length - 1;
 
   const userId = String(userInfo.id);
   const userInDB = await userListDocument.find((doc) => {
@@ -79,47 +109,34 @@ export const updateBotData = async (userInfo: User) => {
   // eslint-disable-next-line prettier/prettier
   const standardDoneDate = `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}`;
 
-  const doneList = await doneListDocument._storage;
-  if (Object.keys(doneList).length === 0) {
-    await doneListDocument.set('totalCount', {
-      _id: 'totalCount',
-      _created: unixTime,
-      _modified: unixTime,
-      value: 1,
-    });
-
-    await doneListDocument.set(standardDoneDate, {
-      _id: standardDoneDate,
-      _created: unixTime,
-      _modified: unixTime,
-      doneCount: 0,
-    });
-  }
-
   if (
-    userInDB != null &&
-    'doneList' in userInDB &&
-    (userInDB['doneList'] as string[]).indexOf(standardDoneDate) === -1
+    !(
+      userInDB != null &&
+      'doneList' in userInDB &&
+      (userInDB['doneList'] as string[]).indexOf(standardDoneDate) === -1
+    )
   ) {
-    (userInDB['doneList'] as string[]).push(standardDoneDate);
-    userInDB._modified = unixTime;
-    await userListDocument.set(userId, userInDB);
-
-    const todayDoneRecord = await doneListDocument.find((doc) => {
-      return doc._id === standardDoneDate;
-    });
-
-    // FIXME: What do we in multiple sync requests? 👇
-    if (todayDoneRecord != null) {
-      todayDoneRecord._modified = unixTime;
-      todayDoneRecord.doneCount = (todayDoneRecord.doneCount as number) + 1;
-      await doneListDocument.set(standardDoneDate, todayDoneRecord);
-    }
+    log('updateBotData: %o', { user: userInDB });
+    return null;
   }
 
-  // To change `totalCount` when we have a new mission in a new date
-  // I think `totalCount` is total of all days that we have missions, am i right?
-  if (doneList._latest !== standardDoneDate) {
+  (userInDB['doneList'] as string[]).push(standardDoneDate);
+  userInDB._modified = unixTime;
+  await userListDocument.set(userId, userInDB);
+
+  const todayDoneRecord = await doneListDocument.find((doc) => {
+    return doc._id === standardDoneDate;
+  });
+
+  // FIXME: What do we in multiple sync requests? 👇
+  if (todayDoneRecord != null) {
+    todayDoneRecord._modified = unixTime;
+    totalDoneCount = todayDoneRecord.doneCount =
+      (todayDoneRecord.doneCount as number) + 1;
+    await doneListDocument.set(standardDoneDate, todayDoneRecord);
+  } else {
+    // To change `totalCount` when we have a new mission in a new date
+    // I think `totalCount` is total of all days that we have missions, am i right?
     const currentTotalCount = await doneListDocument.get('totalCount');
     if (currentTotalCount != null && 'value' in currentTotalCount) {
       await doneListDocument.set('totalCount', {
@@ -127,11 +144,34 @@ export const updateBotData = async (userInfo: User) => {
         _modified: unixTime,
         value: (currentTotalCount.value as number) + 1,
       });
+    } else {
+      await doneListDocument.set('totalCount', {
+        _id: 'totalCount',
+        _created: unixTime,
+        _modified: unixTime,
+        value: 1,
+      });
     }
+
+    totalDoneCount = 1;
+    await doneListDocument.set(standardDoneDate, {
+      _id: standardDoneDate,
+      _created: unixTime,
+      _modified: unixTime,
+      doneCount: 1,
+    });
   }
+
+  return {
+    totalDoneCount,
+    userListCount,
+  };
 };
 
-export const changeUserAcceptState = async (userInfo: User) => {
+export const changeUserAcceptState = async (
+  userInfo: User,
+  accept: boolean,
+) => {
   log('changeUserAcceptState');
 
   const userId = String(userInfo.id);
@@ -147,6 +187,6 @@ export const changeUserAcceptState = async (userInfo: User) => {
 
   await userListDocument.set(userId, {
     ...userInDB,
-    accept: false,
+    accept,
   });
 };

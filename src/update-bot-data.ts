@@ -75,7 +75,7 @@ export const updateBotData = async (userInfo: User) => {
   });
 
   const date = new Date();
-  const unixTime = date.getUTCMilliseconds();
+  const unixTime = date.getTime();
   // eslint-disable-next-line prettier/prettier
   const standardDoneDate = `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}`;
 
@@ -102,7 +102,7 @@ export const updateBotData = async (userInfo: User) => {
     (userInDB['doneList'] as string[]).indexOf(standardDoneDate) === -1
   ) {
     (userInDB['doneList'] as string[]).push(standardDoneDate);
-    userInDB._modified = Date.now();
+    userInDB._modified = unixTime;
     await userListDocument.set(userId, userInDB);
 
     const todayDoneRecord = await doneListDocument.find((doc) => {

@@ -169,12 +169,11 @@ export const updateBotData = async (
 };
 
 export const changeUserAcceptState = async (
-  userInfo: User,
+  userId: string,
   accept: boolean,
 ) => {
   log('changeUserAcceptState');
 
-  const userId = String(userInfo.id);
   const userListDocument = getDocument('user-list');
 
   const userInDB = await userListDocument.find((doc) => {
